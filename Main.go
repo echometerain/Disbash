@@ -49,6 +49,7 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	fmt.Println(command)
 }
 func neofetch(flag *[]string, s *discordgo.Session, m *discordgo.MessageCreate) {
+	dg.Identify.Intents = discordgo.IntentsAll
 	img, _ := s.GuildIcon(m.GuildID)
 	s.ChannelMessageSend(m.ChannelID, "```yaml\n"+getascii(32, &img)+"```")
 	guild, _ := s.Guild(m.GuildID)
@@ -56,19 +57,25 @@ func neofetch(flag *[]string, s *discordgo.Session, m *discordgo.MessageCreate) 
 	for i := 0; i < len(guild.Name)+2; i++ {
 		info += "-"
 	}
+	chans, _ := s.GuildChannels(m.GuildID)
+	members, _ := s.GuildMembers(m.GuildID, "", 1000)
+	membercount := strconv.Itoa(len(members))
+	if membercount == "1000" {
+		membercount = ">=1000"
+	}
 	user, _ := s.User(guild.OwnerID)
-	info += "\nOwner: " + user.Username +
-		"\nMembers: " + strconv.Itoa(guild.ApproximateMemberCount) +
-		"\nOnline: " + strconv.Itoa(guild.ApproximatePresenceCount) +
-		"\nChannels: " + strconv.Itoa(int(len(guild.Channels))) +
-		"\nEmojis: " + strconv.Itoa(int(len(guild.Emojis))) +
+	info += "\nOwner: " + user.Username + "#" + user.Discriminator +
+		"\nChannels: " + strconv.Itoa(len(chans)) +
+		"\nMembers: " + membercount +
+		"\nEmojis: " + strconv.Itoa(len(guild.Emojis)) +
 		"\nRoles: " + strconv.Itoa(len(guild.Roles)) +
 		"\nLocale: " + guild.PreferredLocale +
 		"\nRegion: " + guild.Region +
 		"\nPremium tier: " + strconv.Itoa(int(guild.PremiumTier)) +
 		"\nBoosters: " + strconv.Itoa(guild.PremiumSubscriptionCount) +
 		"\nAFK timeout: " + strconv.Itoa(guild.AfkTimeout) +
-		"\nExplicit content filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter)) +
-		"```"
+		"\nExplicit content filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter)) + "```"
+
 	s.ChannelMessageSend(m.ChannelID, info)
+
 }

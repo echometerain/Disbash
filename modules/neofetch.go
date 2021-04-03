@@ -13,9 +13,8 @@ func Neofetch(flag *[]string, s *discordgo.Session, m *discordgo.MessageCreate) 
 	if err != nil {
 		fmt.Print(err)
 	}
-	name := "\n[" + m.Author.Username + "@" + guild.Name + "]\n"
-	var info string
-	for i := 0; i < len(name)+2; i++ {
+	info := "\n[" + guild.Name + "]\n"
+	for i := 0; i < len(guild.Name)+2; i++ {
 		info += "-"
 	}
 	chans, err := s.GuildChannels(m.GuildID)
@@ -46,5 +45,5 @@ func Neofetch(flag *[]string, s *discordgo.Session, m *discordgo.MessageCreate) 
 		"\nAFK timeout: " + strconv.Itoa(guild.AfkTimeout) + "s" +
 		"\nContent filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter))
 	img, _ := s.GuildIcon(m.GuildID)
-	s.ChannelMessageSend(m.ChannelID, "```ini\n"+utils.GetAscii(32, &img)+name+info+"```")
+	s.ChannelMessageSend(m.ChannelID, "```ini\n"+utils.GetAscii(32, &img)+info+"```")
 }

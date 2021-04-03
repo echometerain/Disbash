@@ -41,7 +41,7 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	command := strings.Split(m.Content, " ")
 	switch command[0] {
 	case "neofetch":
-		modules.Neofetch(&command, s, m)
+		go modules.Neofetch(&command, s, m)
 	default:
 		return
 	}

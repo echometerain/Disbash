@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/bwmarrin/discordgo"
@@ -8,21 +9,31 @@ import (
 )
 
 func Neofetch(flag *[]string, s *discordgo.Session, m *discordgo.MessageCreate) {
-	//dg.Identify.Intents = discordgo.IntentsAll
-	img, _ := s.GuildIcon(m.GuildID)
-	s.ChannelMessageSend(m.ChannelID, "```yaml\n"+utils.GetAscii(32, &img)+"```")
-	guild, _ := s.Guild(m.GuildID)
-	info := "```ini\n[" + guild.Name + "]\n"
-	for i := 0; i < len(guild.Name)+2; i++ {
+	guild, err := s.Guild(m.GuildID)
+	if err != nil {
+		fmt.Print(err)
+	}
+	name := "\n[" + m.Author.Username + "@" + guild.Name + "]\n"
+	var info string
+	for i := 0; i < len(name)+2; i++ {
 		info += "-"
 	}
-	chans, _ := s.GuildChannels(m.GuildID)
-	members, _ := s.GuildMembers(m.GuildID, "", 1000)
+	chans, err := s.GuildChannels(m.GuildID)
+	if err != nil {
+		fmt.Print(err)
+	}
+	members, err := s.GuildMembers(m.GuildID, "", 1000)
+	if err != nil {
+		fmt.Print(err)
+	}
 	membercount := strconv.Itoa(len(members))
 	if membercount == "1000" {
 		membercount = ">=1000"
 	}
-	user, _ := s.User(guild.OwnerID)
+	user, err := s.User(guild.OwnerID)
+	if err != nil {
+		return
+	}
 	info += "\nOwner: " + user.Username + "#" + user.Discriminator +
 		"\nChannels: " + strconv.Itoa(len(chans)) +
 		"\nMembers: " + membercount +
@@ -32,8 +43,8 @@ func Neofetch(flag *[]string, s *discordgo.Session, m *discordgo.MessageCreate) 
 		"\nRegion: " + guild.Region +
 		"\nPremium tier: " + strconv.Itoa(int(guild.PremiumTier)) +
 		"\nBoosters: " + strconv.Itoa(guild.PremiumSubscriptionCount) +
-		"\nAFK timeout: " + strconv.Itoa(guild.AfkTimeout) +
-		"\nContent filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter)) + "```"
-
-	s.ChannelMessageSend(m.ChannelID, info)
+		"\nAFK timeout: " + strconv.Itoa(guild.AfkTimeout) + "s" +
+		"\nContent filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter))
+	img, _ := s.GuildIcon(m.GuildID)
+	s.ChannelMessageSend(m.ChannelID, "```ini\n"+utils.GetAscii(32, &img)+name+info+"```")
 }

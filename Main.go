@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 
@@ -49,5 +50,25 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 func neofetch(flag *[]string, s *discordgo.Session, m *discordgo.MessageCreate) {
 	img, _ := s.GuildIcon(m.GuildID)
-	s.ChannelMessageSend(m.ChannelID, "```"+getascii(32, &img)+"```")
+	s.ChannelMessageSend(m.ChannelID, "```yaml\n"+getascii(32, &img)+"```")
+	guild, _ := s.Guild(m.GuildID)
+	info := "```ini\n[" + guild.Name + "]\n"
+	for i := 0; i < len(guild.Name)+2; i++ {
+		info += "-"
+	}
+	user, _ := s.User(guild.OwnerID)
+	info += "\nOwner: " + user.Username +
+		"\nMembers: " + strconv.Itoa(guild.ApproximateMemberCount) +
+		"\nOnline: " + strconv.Itoa(guild.ApproximatePresenceCount) +
+		"\nChannels: " + strconv.Itoa(int(len(guild.Channels))) +
+		"\nEmojis: " + strconv.Itoa(int(len(guild.Emojis))) +
+		"\nRoles: " + strconv.Itoa(len(guild.Roles)) +
+		"\nLocale: " + guild.PreferredLocale +
+		"\nRegion: " + guild.Region +
+		"\nPremium tier: " + strconv.Itoa(int(guild.PremiumTier)) +
+		"\nBoosters: " + strconv.Itoa(guild.PremiumSubscriptionCount) +
+		"\nAFK timeout: " + strconv.Itoa(guild.AfkTimeout) +
+		"\nExplicit content filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter)) +
+		"```"
+	s.ChannelMessageSend(m.ChannelID, info)
 }

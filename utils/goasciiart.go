@@ -1,6 +1,6 @@
 // by mo2zie
 
-package main
+package utils
 
 import (
 	"github.com/nfnt/resize"
@@ -15,7 +15,7 @@ import (
 	"reflect"
 )
 
-var ASCIISTR = "MND8OZ$7I?+=~:,.."
+var ASCIISTR = "MND8OZ$7I?+=~:,. "
 
 func Init(width *int, path *string) (image.Image, int) {
 	f, err := os.Open(*path)
@@ -55,6 +55,6 @@ func Convert2Ascii(img image.Image, w, h int) []byte {
 	return buf.Bytes()
 }
 
-func getascii(width int, img *image.Image) string {
+func GetAscii(width int, img *image.Image) string {
 	return string(Convert2Ascii(ScaleImage(*img, width)))
 }

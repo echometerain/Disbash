@@ -19,7 +19,7 @@ func main() {
 		fmt.Print("Please place bot token in a file named \"token\" in the install directory")
 		return
 	}
-	dg, err := discordgo.New("Bot " + string(token))
+	dg, err = discordgo.New("Bot " + string(token))
 	if err != nil {
 		panic(err)
 	}
@@ -28,7 +28,7 @@ func main() {
 	dg.AddHandler(listener)
 
 	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sig
 
 	dg.Close()
@@ -45,9 +45,9 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	default:
 		return
 	}
-	fmt.Print(command)
+	fmt.Println(command)
 }
 func neofetch(flag *[]string, s *discordgo.Session, m *discordgo.MessageCreate) {
 	img, _ := s.GuildIcon(m.GuildID)
-	fmt.Print(getascii(44, &img))
+	s.ChannelMessageSend(m.ChannelID, "```"+getascii(32, &img)+"```")
 }

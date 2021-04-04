@@ -54,6 +54,8 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case "neofetch":
 		modules.Neofetch(fmap, s, m)
 	case "shutdown":
+		s.ChannelMessageSend(m.ChannelID, "Initiating shutdown sequence")
+		dg.Close()
 		os.Exit(0)
 	default:
 		return

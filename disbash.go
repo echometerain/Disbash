@@ -15,6 +15,8 @@ import (
 var dg *discordgo.Session
 var mods = map[string]struct{}{
 	"neofetch": {},
+	"pinky":    {},
+	"shutdown": {},
 }
 
 func main() {
@@ -51,6 +53,8 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	switch (*fmap)["_"] {
 	case "neofetch":
 		modules.Neofetch(fmap, s, m)
+	case "shutdown":
+		os.Exit(0)
 	default:
 		return
 	}

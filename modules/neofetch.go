@@ -34,11 +34,11 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 		return
 	}
 	info += "\nOwner: " + user.Username + "#" + user.Discriminator +
-		"\nChannels: " + strconv.Itoa(len(chans)) +
-		"\nMembers: " + membercount +
-		"\nEmojis: " + strconv.Itoa(len(guild.Emojis)) +
-		"\nRoles: " + strconv.Itoa(len(guild.Roles)) +
-		"\nLocale: " + guild.PreferredLocale +
+		"\nChannels: " + strconv.Itoa(len(chans))
+	info += "\nMembers: " + membercount
+	info += "\nEmojis: " + strconv.Itoa(len(guild.Emojis)) +
+		"\nRoles: " + strconv.Itoa(len(guild.Roles))
+	info += "\nLocale: " + guild.PreferredLocale +
 		"\nRegion: " + guild.Region +
 		"\nPremium tier: " + strconv.Itoa(int(guild.PremiumTier)) +
 		"\nBoosters: " + strconv.Itoa(guild.PremiumSubscriptionCount) +

@@ -45,5 +45,5 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 		"\nAFK timeout: " + strconv.Itoa(guild.AfkTimeout) + "s" +
 		"\nContent filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter))
 	img, _ := s.GuildIcon(m.GuildID)
-	s.ChannelMessageSend(m.ChannelID, "```ini\n"+utils.GetAscii(32, &img)+info+"```")
+	s.ChannelMessageSend(m.ChannelID, "```cs\n"+utils.GetAscii(32, &img)+info+"```")
 }

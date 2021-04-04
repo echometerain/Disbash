@@ -15,7 +15,8 @@ import (
 	"reflect"
 )
 
-var ASCIISTR = "MND8OZ$7I?+=~:,. "
+//   ,:;Il!i><_?}{)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhaoMW&%B@
+var ASCIISTR = "  ,:I=!?I/XZONM&@"
 
 func Init(width *int, path *string) (image.Image, int) {
 	f, err := os.Open(*path)

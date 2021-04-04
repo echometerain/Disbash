@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io/ioutil" //reading files
 	"os"
-	"os/signal"
+	"os/signal" //good practice for handling stop signals
 	"strings"
 	"syscall"
 
@@ -13,6 +13,9 @@ import (
 )
 
 var dg *discordgo.Session
+var mods = map[string]struct{}{
+	"neofetch": {},
+}
 
 func main() {
 	token, err := ioutil.ReadFile("token")
@@ -38,34 +41,44 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID || m.Author.Bot {
 		return
 	}
-	fmap := flags(&m.Content, s, m)
+	commands := strings.Split(m.Content, " ")
+	if _, ok := mods[commands[0]]; !ok {
+		return
+	}
+
+	fmap := flags(&commands, s, m)
+	fmt.Print(*fmap)
 	switch (*fmap)["_"] {
 	case "neofetch":
-		go modules.Neofetch(fmap, s, m)
+		modules.Neofetch(fmap, s, m)
 	default:
 		return
 	}
 }
-func flags(content *string, s *discordgo.Session, m *discordgo.MessageCreate) (fmap *map[string]string) {
-	var command []string = strings.Split(m.Content, " ")
+func flags(commands *[]string, s *discordgo.Session, m *discordgo.MessageCreate) *map[string]string {
+	fmap := map[string]string{}
+	if len(*commands) == 0 {
+		*commands = strings.Split(m.Content, " ")
+	}
+
 	last := "_"
-	for _, fl := range command {
+	for _, fl := range *commands {
 		if fl[0] == '-' {
 			if fl[1] == '-' {
 				flp := fl[2 : len(fl)-1]
-				(*fmap)[flp] = ""
+				fmap[flp] = ""
 				last = flp
 
 			} else {
 				for _, rfl := range fl[1 : len(fl)-1] {
 					sfl := string(rfl)
-					(*fmap)[sfl] = ""
+					fmap[sfl] = ""
 					last = sfl
 				}
 			}
 		} else {
-			(*fmap)[last] = fl
+			fmap[last] = fl
 		}
 	}
-	return
+	return &fmap
 }

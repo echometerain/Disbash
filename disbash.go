@@ -38,12 +38,34 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID || m.Author.Bot {
 		return
 	}
-	command := strings.Split(m.Content, " ")
-	switch command[0] {
+	fmap := flags(&m.Content, s, m)
+	switch (*fmap)["_"] {
 	case "neofetch":
-		go modules.Neofetch(&command, s, m)
+		go modules.Neofetch(fmap, s, m)
 	default:
 		return
 	}
-	fmt.Println(command)
+}
+func flags(content *string, s *discordgo.Session, m *discordgo.MessageCreate) (fmap *map[string]string) {
+	var command []string = strings.Split(m.Content, " ")
+	last := "_"
+	for _, fl := range command {
+		if fl[0] == '-' {
+			if fl[1] == '-' {
+				flp := fl[2 : len(fl)-1]
+				(*fmap)[flp] = ""
+				last = flp
+
+			} else {
+				for _, rfl := range fl[1 : len(fl)-1] {
+					sfl := string(rfl)
+					(*fmap)[sfl] = ""
+					last = sfl
+				}
+			}
+		} else {
+			(*fmap)[last] = fl
+		}
+	}
+	return
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/rain1598/disbash/utils"
 )
 
-func Neofetch(flag *[]string, s *discordgo.Session, m *discordgo.MessageCreate) {
+func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.MessageCreate) {
 	guild, err := s.Guild(m.GuildID)
 	if err != nil {
 		fmt.Print(err)

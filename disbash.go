@@ -49,7 +49,7 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	fmap := flags(&commands, s, m)
-	fmt.Print(*fmap)
+	fmt.Println(*fmap)
 	switch (*fmap)["_"] {
 	case "neofetch":
 		modules.Neofetch(fmap, s, m)
@@ -66,17 +66,16 @@ func flags(commands *[]string, s *discordgo.Session, m *discordgo.MessageCreate)
 	if len(*commands) == 0 {
 		*commands = strings.Split(m.Content, " ")
 	}
-
 	last := "_"
 	for _, fl := range *commands {
 		if fl[0] == '-' {
 			if fl[1] == '-' {
-				flp := fl[2 : len(fl)-1]
+				flp := fl[2:]
 				fmap[flp] = ""
 				last = flp
 
 			} else {
-				for _, rfl := range fl[1 : len(fl)-1] {
+				for _, rfl := range fl[1:] {
 					sfl := string(rfl)
 					fmap[sfl] = ""
 					last = sfl

@@ -30,7 +30,7 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 		info += "-"
 	}
 	var chans []*discordgo.Channel
-	membercount := ""
+	var membercount string
 	var members []*discordgo.Member
 	if !fast {
 		chans, err = s.GuildChannels(m.GuildID)
@@ -41,7 +41,7 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 		if err != nil {
 			fmt.Print(err)
 		}
-		membercount := strconv.Itoa(len(members))
+		membercount = strconv.Itoa(len(members))
 		if membercount == "1000" {
 			membercount = ">=1000"
 		}
@@ -56,14 +56,18 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 		if vorbose {
 			text := 0
 			voice := 0
+			cats := 0
 			for _, val := range chans {
-				if (*val).Type == discordgo.ChannelType(2) {
+				if (*val).Type == discordgo.ChannelTypeGuildVoice {
 					voice++
+				} else if (*val).Type == discordgo.ChannelTypeGuildCategory {
+					cats++
 				} else {
 					text++
 				}
 			}
-			info += strconv.Itoa(voice) + " (voice) " + strconv.Itoa(text) + " (text)"
+			info += strconv.Itoa(voice) + " (voice) " + strconv.Itoa(text) + " (text)" +
+				"\nCategories: " + strconv.Itoa(cats)
 		} else {
 			info += strconv.Itoa(len(chans))
 		}
@@ -76,7 +80,8 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 				if err != nil {
 					return
 				}
-				if p == discordgo.PermissionManageMessages {
+				if p&discordgo.PermissionManageMessages == discordgo.PermissionManageMessages ||
+					p&discordgo.PermissionAdministrator == discordgo.PermissionAdministrator {
 					mods++
 				} else {
 					mems++
@@ -94,8 +99,10 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 	}
 	info += "\nRegion: " + guild.Region +
 		"\nPremium tier: " + strconv.Itoa(int(guild.PremiumTier)) +
-		"\nBoosters: " + strconv.Itoa(guild.PremiumSubscriptionCount) +
-		"\nAFK timeout: " + strconv.Itoa(guild.AfkTimeout) + "s" +
-		"\nContent filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter))
-	s.ChannelMessageSend(m.ChannelID, utils.GetAscii(32, &img)+info+"```")
+		"\nBoosters: " + strconv.Itoa(guild.PremiumSubscriptionCount)
+	if vorbose {
+		info += "\nAFK timeout: " + strconv.Itoa(guild.AfkTimeout) + "s" +
+			"\nContent filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter))
+	}
+	s.ChannelMessageSend(m.ChannelID, info+"```")
 }

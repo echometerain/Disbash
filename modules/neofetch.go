@@ -120,6 +120,6 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 		}
 		s.ChannelMessageSend(m.ChannelID, "```yaml\n"+result+"```")
 	} else {
-		s.ChannelMessageSend(m.ChannelID, "```cs\n"+imgtxt+info+"```")
+		s.ChannelMessageSend(m.ChannelID, "```yaml\n"+imgtxt+info+"```")
 	}
 }

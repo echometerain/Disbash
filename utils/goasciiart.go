@@ -14,7 +14,7 @@ import (
 )
 
 //   ,:;Il!i><_?}{)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhaoMW&%B@
-var ASCIISTR = "  ,:I=!?I/XZONM&@"
+var ASCIISTR = "  ,:I=<?I/XZONM&@"
 
 func Init(width *int, path *string) (image.Image, int) {
 	f, err := os.Open(*path)

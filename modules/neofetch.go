@@ -3,6 +3,7 @@ package modules
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/rain1598/disbash/utils"
@@ -12,6 +13,7 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 	_, infoOnly := (*fmap)["i"]
 	_, fast := (*fmap)["f"]
 	_, vorbose := (*fmap)["v"]
+	_, side := (*fmap)["s"]
 
 	guild, err := s.Guild(m.GuildID)
 	if err != nil {
@@ -21,11 +23,11 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 	if err != nil {
 		fmt.Print(err)
 	}
-	info := "```cs\n"
+	imgtxt := ""
 	if !infoOnly {
-		info += utils.GetAscii(32, &img)
+		imgtxt = utils.GetAscii(32, &img) + "\n"
 	}
-	info += "\n[" + guild.Name + "]\n"
+	info := "[" + guild.Name + "]\n"
 	for i := 0; i < len(guild.Name)+2; i++ {
 		info += "-"
 	}
@@ -104,5 +106,20 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 		info += "\nAFK timeout: " + strconv.Itoa(guild.AfkTimeout) + "s" +
 			"\nContent filter level: " + strconv.Itoa(int(guild.ExplicitContentFilter))
 	}
-	s.ChannelMessageSend(m.ChannelID, info+"```")
+	if !infoOnly && side {
+		imgarr := strings.Split(imgtxt, "\n")
+		infoarr := strings.Split(info, "\n")
+		infolen := len(infoarr)
+		result := ""
+		for i := 0; i < 22; i++ {
+			if i < infolen {
+				result += imgarr[i] + "   " + infoarr[i] + "\n"
+			} else {
+				result += imgarr[i] + "\n"
+			}
+		}
+		s.ChannelMessageSend(m.ChannelID, "```yaml\n"+result+"```")
+	} else {
+		s.ChannelMessageSend(m.ChannelID, "```cs\n"+imgtxt+info+"```")
+	}
 }

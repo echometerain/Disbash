@@ -54,6 +54,8 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	switch (*fmap)["_"] {
 	case "neofetch":
 		modules.Neofetch(fmap, s, m)
+	case "pinky":
+		modules.Pinky(fmap, s, m)
 	case "shutdown":
 		s.ChannelMessageSend(m.ChannelID, "Initiating shutdown sequence")
 		dg.Close()
@@ -84,6 +86,9 @@ func flags(commands *[]string, s *discordgo.Session, m *discordgo.MessageCreate)
 			}
 		} else {
 			fmap[last] = fl
+			if last == "_" {
+				last = fl
+			}
 		}
 	}
 	return &fmap

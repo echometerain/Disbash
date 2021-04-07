@@ -14,7 +14,12 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 	_, fast := (*fmap)["f"]
 	_, vorbose := (*fmap)["v"]
 	_, side := (*fmap)["s"]
-
+	channel, _ := s.Channel(m.ChannelID)
+	if channel.Type == discordgo.ChannelTypeDM || channel.Type == discordgo.ChannelTypeGroupDM {
+		s.ChannelMessageSend(m.ChannelID, "No server found, returning pinky")
+		Pinky(fmap, s, m)
+		return
+	}
 	guild, err := s.Guild(m.GuildID)
 	if err != nil {
 		fmt.Print(err)

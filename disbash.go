@@ -12,43 +12,44 @@ import (
 	"github.com/rain1598/disbash/modules"
 )
 
-var dg *discordgo.Session
-var mods = map[string]struct{}{
+var dg *discordgo.Session       //global discord session var (for changing intents)
+var mods = map[string]struct{}{ //commands
 	"neofetch": {},
 	"pinky":    {},
 	"shutdown": {},
 }
 
 func main() {
-	token, err := ioutil.ReadFile("token")
+	token, err := ioutil.ReadFile("token") //reads token file
 	if err != nil {
 		fmt.Print("Please place bot token in a file named \"token\" in the install directory")
 		return
 	}
-	dg, err = discordgo.New("Bot " + string(token))
+	dg, err = discordgo.New("Bot " + string(token)) //autherizes bot
 	if err != nil {
 		panic(err)
 	}
-	dg.Open()
+	dg.Open() //starts bot
+	fmt.Println("Started and connected")
 	dg.Identify.Intents = discordgo.IntentsGuildMessages
-	dg.AddHandler(listener)
+	dg.AddHandler(listener) //new messages will be sent to listener()
 
-	sig := make(chan os.Signal, 1)
+	sig := make(chan os.Signal, 1) //shuts down the program nicely
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	<-sig
 
+	<-sig
 	dg.Close()
+
 }
 func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if m.Author.ID == s.State.User.ID || m.Author.Bot {
+	if m.Author.ID == s.State.User.ID || m.Author.Bot { //can't recieve orders from youself and other bots
 		return
 	}
 	commands := strings.Split(m.Content, " ")
-	if _, ok := mods[commands[0]]; !ok {
+	if _, ok := mods[commands[0]]; !ok { //command must be in mods[]
 		return
 	}
-
-	fmap := flags(&commands, s, m)
+	fmap := flags(&commands, s, m) //turns a command and flag into an map
 	fmt.Println(*fmap)
 	switch (*fmap)["_"] {
 	case "neofetch":

@@ -52,7 +52,7 @@ func Neofetch(fmap *map[string]string, s *discordgo.Session, m *discordgo.Messag
 	if err != nil {
 		return
 	}
-	info += "\nOwner: " + user.Username + "#" + user.Discriminator
+	info += "\nOwner: " + user.String()
 	if !fast {
 		info += "\nChannels: "
 		if vorbose {

@@ -65,7 +65,7 @@ func listener(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 func flags(commands *[]string, s *discordgo.Session, m *discordgo.MessageCreate) *map[string]string {
-	fmap := map[string]string{}
+	fmap := map[string]string{} // this is a flag map, NOT A FLATMAP!!!!
 	if len(*commands) == 0 {
 		*commands = strings.Split(m.Content, " ")
 	}
